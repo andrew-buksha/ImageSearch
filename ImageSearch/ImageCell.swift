@@ -25,18 +25,24 @@ class ImageCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func configureCell(searchResult: SearchResult) {
+    func configureCell(searchResult: SearchResult, img: UIImage?) {
         self.searchResult = searchResult
         
         self.imageNameLbl.text = searchResult.imageName
         
-        request = Alamofire.request(.GET, searchResult.imgLink).validate(contentType: ["image/*"]).response(completionHandler: { request, response, data, err in
-            if err == nil {
-                let googleImage = UIImage(data: data!)!
-                self.googleImage.image = googleImage
-                ViewController.vcCache.setObject(googleImage, forKey: self.searchResult.imgLink)
-            }
-        })
+        if img != nil {
+            self.googleImage.image = img
+        } else {
+            googleImage.image = UIImage(named: "placeholder")
+            request = Alamofire.request(.GET, searchResult.imgLink).validate(contentType: ["image/*"]).response(completionHandler: { request, response, data, err in
+                if err == nil {
+                    let googleImage = UIImage(data: data!)!
+                    self.googleImage.image = googleImage
+                    ViewController.vcCache.setObject(googleImage, forKey: self.searchResult.imgLink)
+                }
+            })
+        }
+        
     }
 
 }

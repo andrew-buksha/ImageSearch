@@ -9,10 +9,11 @@
 import UIKit
 import Alamofire
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var searchField: MaterialTextField!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var scrollView: UIScrollView!
     
     static var vcCache = NSCache()
     
@@ -41,6 +42,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         return 1
     }
     
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        scrollView.setContentOffset(CGPointMake(0, 215), animated: true)
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        scrollView.setContentOffset(CGPointMake(0, 0), animated: true)
+    }
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let searchResult = searchResults[indexPath.row]
         
@@ -52,7 +66,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             
             img = ViewController.vcCache.objectForKey(searchResult.imgLink) as? UIImage
             
-            cell.configureCell(searchResult)
+            cell.configureCell(searchResult, img: img)
             return cell
         } else {
             return ImageCell()
